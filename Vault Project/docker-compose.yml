@@ -1,4 +1,3 @@
-version: '3.7'
 
 services:
   postgres:
@@ -77,6 +76,47 @@ services:
     networks:
       - keycloak_network
 
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mailserver
+    # Provide the FQDN of your mail server here (Your DNS MX record should point to this value)
+    hostname: acm-2.csd.auth.gr
+    ports: #25 smtp, 143 unsecure imap
+      - "587:587" #secure smtp -> plain smtp -> tls via startls
+      - "465:465" #direct smtp
+      - "993:993" #encrypted imap
+    volumes:
+      - ./docker-data/dms/mail-data/:/var/mail/
+      - ./docker-data/dms/mail-state/:/var/mail-state/
+      - ./docker-data/dms/mail-logs/:/var/log/mail/
+      - ./docker-data/dms/config/:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/letsencrypt/:/etc/letsencrypt:ro
+    environment:
+      - ENABLE_FAIL2BAN=1
+      - SSL_TYPE=letsencrypt # For ssl certs
+      - ENABLE_IMAP=1
+      - ENABLE_POP3=0
+      #- ENABLE_SPAMASSASSIN=1 #Alt to rspamd
+      #- ENABLE_POSTGREY=1 #For greylisting, not now
+      - DMS_DEBUG=1
+      - LOG_LEVEL=debug
+      - SUPERVISOR_LOGLEVEL=info
+      - PERMIT_DOCKER=connected-networks # Allow keycloak and other containers to send mail
+      - SPOOF_PROTECTION=0
+      - ENABLE_RSPAMD=1 # Check incoming mail for spam 
+      - ENABLE_CLAMAV=1 # Antivirus for incoming mail
+      # Security - After handling dns records
+      #- ENABLE_OPENDKIM=1
+      #- ENABLE_OPENDMARC=1
+      #- ENABLE_POLICYD_SPF=1
+      # Postfix
+      - POSTFIX_INET_PROTOCOLS=ipv4
+    cap_add:
+      - NET_ADMIN # For Fail2Ban to work 
+    restart: always
+    networks:
+      - keycloak_network
 
 volumes:
   postgres_data:
