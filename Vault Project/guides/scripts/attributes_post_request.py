@@ -40,8 +40,7 @@ def main() -> None:
         print(f'\nAn error occurred, titled "{error_code}"\nDescription: {error_descr}')
     else: #all went okay
         public_key = f'-----BEGIN PUBLIC KEY-----\n{os.getenv("PUBLIC_KEY")}\n-----END PUBLIC KEY-----'
-        options = {'verify_exp': False,
-                   'verify_aud': False}
+        options = {'verify_aud': False}
         json = jwt.decode(
             jwt=token,
             key=public_key,
