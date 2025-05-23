@@ -14,7 +14,7 @@ custom protocol mapper which will map our users' attributes. **This is NOT neces
 ***Steps in Keycloak:***
 1) Create a group (and/or subgroups)
 2) Create an attribute (Attributes tab)
-3) Create a new client. Name it whatever you want (f.e. attr_mapper_client)
+3) Create a new client. Name it whatever you want (f.e. attr_mapper_client). Make sure to enable options `Client authentication` & `Direct access grants`.
 4) Go to Client Scopes -> {client_name}_dedicated -> Mappers
 5) Add a new mapper **by configuration**
 6) Select the **User Attribute** option
