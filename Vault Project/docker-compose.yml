@@ -80,7 +80,7 @@ services:
     image: ghcr.io/docker-mailserver/docker-mailserver:latest
     container_name: mailserver
     # Provide the FQDN of your mail server here (Your DNS MX record should point to this value)
-    hostname: acm-2.csd.auth.gr
+    hostname: acm.auth.gr
     ports: #25 smtp, 143 unsecure imap
       - "587:587" #secure smtp -> plain smtp -> tls via startls
       - "465:465" #direct smtp
@@ -107,9 +107,9 @@ services:
       - ENABLE_RSPAMD=1 # Check incoming mail for spam 
       - ENABLE_CLAMAV=1 # Antivirus for incoming mail
       # Security - After handling dns records
-      #- ENABLE_OPENDKIM=1
-      #- ENABLE_OPENDMARC=1
-      #- ENABLE_POLICYD_SPF=1
+      - ENABLE_OPENDKIM=1
+      - ENABLE_OPENDMARC=1
+      - ENABLE_POLICYD_SPF=1
       # Postfix
       - POSTFIX_INET_PROTOCOLS=ipv4
     cap_add:
